@@ -32,24 +32,30 @@ def create_audio(quote:str = None) -> str:
 
     files = [f for f in listdir('Audios') if isfile(join('Audios', f))]
 
+    print(files)
+
     if files:
 
         last_file_num = int(files[len(files)-1].replace('voice_', '').replace('.mp3', ''))
 
-        audio_file = f'voice_{last_file_num + 1}.mp3'
+        audio_file = f'Audios/voice_{last_file_num + 1}.mp3'
     
     else:
 
-        audio_file = 'voice_1.mp3'
+        audio_file = 'Audios/voice_1.mp3'
+
+    print(audio_file)
 
     ts.save_to_file(quote, audio_file)
+
+    ts.runAndWait()
 
     return audio_file
 
 
 def create_video(quote:str, author:str, audio:str) -> None:
 
-    clip = VideoFileClip(f"Videos/bg_videos/bg_{randint(1, 6)}.mp4")
+    clip = VideoFileClip(f"Videos/bg_videos/bg_{randint(1, 6)}.webm")
 
     clip = clip.volumex(0)
 
@@ -65,7 +71,7 @@ def create_video(quote:str, author:str, audio:str) -> None:
 
     if duration >= 10:
 
-        random_start = randint(0, duration-10)
+        random_start = randint(0, int(duration-10))
 
         end = random_start + 10
 
@@ -77,13 +83,13 @@ def create_video(quote:str, author:str, audio:str) -> None:
 
     clip = all.resize(clip, width=1080, height=1920)
 
-    clip = clip.set_opacity(0.5)
+    clip = clip.set_opacity(1)
 
-    txt_clip = TextClip(full_text, fontsize=80, color='black', font='Vivaldi-Cursiva')
+    txt_clip = TextClip(full_text, fontsize=80, color='white', font='Vivaldi-Cursiva')
 
     txt_clip = txt_clip.set_pos('center').set_duration(10)
 
-    audioclip = AudioFileClip(f'Audios/{audio}')
+    audioclip = AudioFileClip(audio)
 
     silence_clip = AudioFileClip('Audios/silence/silence.mp3')
 
@@ -93,9 +99,15 @@ def create_video(quote:str, author:str, audio:str) -> None:
 
     video = CompositeVideoClip([clip, txt_clip])
 
-    video.write_videofile("Videos/finished_videos/video_1.mp4")
+    video = all.resize(video, width=1080, height=1920)
+
+    video.write_videofile("Videos/finished_videos/video_1.webm")
 
 
 if __name__ == '__main__':
 
-    create_audio()
+    quote = get_quote(url=api)
+
+    audio = create_audio(quote[0])
+
+    create_video(quote[0], quote[1], audio)
