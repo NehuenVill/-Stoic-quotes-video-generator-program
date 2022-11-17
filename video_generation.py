@@ -6,6 +6,8 @@ from os import listdir
 from os.path import isfile, join
 from random import randint
 
+# Remember to swap the resolution to see what happens.
+
 api = 'https://api.themotivate365.com/stoic-quote'
 
 def get_quote(url:str) -> list:
@@ -55,13 +57,29 @@ def create_audio(quote:str = None) -> str:
 
 def create_video(quote:str, author:str, audio:str) -> None:
 
-    clip = VideoFileClip(f"Videos/bg_videos/bg_{randint(1, 6)}.webm")
+    clip = VideoFileClip(f"Videos/bg_videos/bg_{randint(1, 6)}.mp4")
 
-    clip = clip.volumex(0)
+    splitted_quote = quote.split()
+
+    fixed_quote = ''
+
+    word_count = 0
+
+    for word in splitted_quote:
+
+        fixed_quote += f'{word} '
+
+        if word_count % 5 == 0 and word_count != 0:
+
+            fixed_quote += '\n'
+
+        word_count += 1
+
+    print(fixed_quote)
 
     full_text = f"""
 
-{quote}
+{fixed_quote}
 
 -{author}
                 
@@ -83,9 +101,7 @@ def create_video(quote:str, author:str, audio:str) -> None:
 
     clip = all.resize(clip, width=1080, height=1920)
 
-    clip = clip.set_opacity(1)
-
-    txt_clip = TextClip(full_text, fontsize=80, color='white', font='Vivaldi-Cursiva')
+    txt_clip = TextClip(full_text, bg_color='black', fontsize=65, color='white', font='Vivaldi-Cursiva')
 
     txt_clip = txt_clip.set_pos('center').set_duration(10)
 
@@ -99,9 +115,7 @@ def create_video(quote:str, author:str, audio:str) -> None:
 
     video = CompositeVideoClip([clip, txt_clip])
 
-    video = all.resize(video, width=1080, height=1920)
-
-    video.write_videofile("Videos/finished_videos/video_1.webm")
+    video.write_videofile("Videos/finished_videos/video_1.mp4")
 
 
 if __name__ == '__main__':
