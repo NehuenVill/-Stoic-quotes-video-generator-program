@@ -54,7 +54,6 @@ def create_audio(quote:str = None) -> str:
 
     return audio_file
 
-
 def create_video(quote:str, author:str, audio:str) -> None:
 
     clip = VideoFileClip(f"Videos/bg_videos/bg_{randint(1, 6)}.mp4")
@@ -99,7 +98,6 @@ def create_video(quote:str, author:str, audio:str) -> None:
 
         print('Too short background video, better delete.')
 
-    clip = all.resize(clip, width=1080, height=1920)
 
     txt_clip = TextClip(full_text, bg_color='black', fontsize=65, color='white', font='Vivaldi-Cursiva')
 
@@ -117,11 +115,34 @@ def create_video(quote:str, author:str, audio:str) -> None:
 
     video.write_videofile("Videos/finished_videos/video_1.mp4")
 
+def get_all_mp4(dir:str) -> list:
+
+    mp4_list = listdir(dir)
+
+    return mp4_list
+
+def change_video_size(video:str) -> None:
+
+    clip = VideoFileClip(video)
+    
+    clip = clip.resize((1080, 1920))
+
+    clip.write_videofile(video)
+
 
 if __name__ == '__main__':
 
+    for video in get_all_mp4('Videos/bg_videos'):
+
+        print(f'Resizing video: {video}')
+
+        change_video_size(video=f'Videos/bg_videos/{video}')
+
+    """
     quote = get_quote(url=api)
 
     audio = create_audio(quote[0])
 
     create_video(quote[0], quote[1], audio)
+
+    """
